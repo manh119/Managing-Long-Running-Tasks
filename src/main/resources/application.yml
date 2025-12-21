@@ -1,0 +1,38 @@
+
+
+  /*
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/jobdb
+    username: postgres
+    password: password
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+kafka:
+  topics:
+    jobs:
+      fast: jobs.fast           # Image, PDF, quick tasks
+      long: jobs.long           # Video, ML, long tasks
+      dlq: jobs.dlq            # Dead letter queue
+
+# Monitoring
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+
