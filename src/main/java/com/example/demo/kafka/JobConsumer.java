@@ -3,9 +3,9 @@ package com.example.demo.kafka;
 import com.example.demo.dto.*;
 import com.example.demo.entity.Job;
 import com.example.demo.repository.JobRepository;
-import com.example.demo.service.ImageProcessor;
 import com.example.demo.service.SseService;
 import com.example.demo.service.VideoTranscoder;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.persistence.OptimisticLockException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -28,22 +28,10 @@ public class JobConsumer {
     private final JobProducer jobProducer;
     private final SseService sseService;
     private final VideoTranscoder videoTranscoder;
-    private final ImageProcessor imageProcessor;
     private final ObjectMapper objectMapper;
 
     private static final int MAX_RETRY_COUNT = 3;
 
-    // Worker cho FAST queue (image processing, PDF gen, etc.)
-    @KafkaListener(topics = "${kafka.topics.jobs.fast}", groupId = "job-worker-fast", concurrency = "5", // 5 consumer
-                                                                                                         // threads
-            properties = {
-                    "session.timeout.ms=30000", // 30s session timeout
-                    "heartbeat.interval.ms=10000", // 10s heartbeat
-                    "max.poll.interval.ms=300000" // 5 min max processing
-            })
-    public void processFastJob(JobMessage message, Acknowledgment ack) {
-        processJob(message, ack, false);
-    }
 
     // Worker cho LONG queue (video transcoding, ML inference)
     @KafkaListener(topics = "${kafka.topics.jobs.long}", groupId = "job-worker-long", concurrency = "3", // Ít worker
@@ -54,8 +42,14 @@ public class JobConsumer {
                     "heartbeat.interval.ms=20000", // 20s heartbeat
                     "max.poll.interval.ms=1800000" // 30 min max processing
             })
-    public void processLongJob(JobMessage message, Acknowledgment ack) {
-        processJob(message, ack, true);
+    public void processLongJob(String message, Acknowledgment ack) {
+        JobMessage jobMessage = null;
+        try {
+            jobMessage = objectMapper.readValue(message, JobMessage.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        processJob(jobMessage, ack, true);
     }
 
     private void processJob(JobMessage message, Acknowledgment ack, boolean isLongJob) {
@@ -128,23 +122,10 @@ public class JobConsumer {
     }
 
     private String executeJob(Job job) throws Exception {
-        switch (job.getType()) {
-            case VIDEO_TRANSCODE:
-                VideoTranscodeRequest videoReq = deserialize(
-                        job.getPayload(), VideoTranscodeRequest.class);
-                return videoTranscoder.transcode(videoReq,
-                        progress -> updateProgress(job.getId(), progress));
-
-            case IMAGE_PROCESS:
-                ImageProcessRequest imageReq = deserialize(
-                        job.getPayload(), ImageProcessRequest.class);
-                return imageProcessor.process(imageReq,
-                        progress -> updateProgress(job.getId(), progress));
-
-            default:
-                throw new UnsupportedOperationException(
-                        "Job type not supported: " + job.getType());
-        }
+        VideoTranscodeRequest videoReq = deserialize(
+                job.getPayload(), VideoTranscodeRequest.class);
+        return videoTranscoder.transcode(videoReq,
+                progress -> updateProgress(job.getId(), progress));
     }
 
     private void updateProgress(String jobId, int progress) {
@@ -211,11 +192,7 @@ public class JobConsumer {
 
         CompletableFuture.delayedExecutor(delaySeconds, TimeUnit.SECONDS)
                 .execute(() -> {
-                    if (message.getType() == JobType.VIDEO_TRANSCODE) {
-                        jobProducer.sendToLongQueue(message);
-                    } else {
-                        jobProducer.sendToFastQueue(message);
-                    }
+                    jobProducer.sendToLongQueue(message);
                 });
 
         log.info("Scheduled retry for job {} in {}s", message.getJobId(), delaySeconds);

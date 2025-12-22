@@ -33,16 +33,14 @@ public class AsyncJobProcessorApplication {
             
             API Endpoints:
             - POST /api/v1/jobs/video-transcode
-            - POST /api/v1/jobs/image-process
             - GET  /api/v1/jobs/{jobId}
             - GET  /api/v1/jobs/{jobId}/stream (SSE)
-            - POST /api/v1/workflows/reports
             - GET  /actuator/health
             - GET  /actuator/metrics
             - GET  /actuator/prometheus
             
             Monitoring:
-            - Application: http://localhost:8081
+            - Application: http://localhost:8088
             - Kafka UI:    http://localhost:8080
             - Prometheus:  http://localhost:9090
             - Grafana:     http://localhost:3000

@@ -7,11 +7,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 
-// Job Entity
 @Entity
 @Table(name = "jobs", indexes = {
         @Index(name = "idx_idempotency", columnList = "idempotencyKey", unique = true),
@@ -23,6 +24,7 @@ import java.util.Map;
 @AllArgsConstructor
 @Builder
 public class Job {
+
     @Id
     private String id;
 
@@ -32,11 +34,11 @@ public class Job {
     @Enumerated(EnumType.STRING)
     private JobStatus status;
 
-    @Column(unique = true, nullable = false)
+    @Column(name = "idempotency_key", unique = true, nullable = false)
     private String idempotencyKey;
 
     @Column(columnDefinition = "TEXT")
-    private String payload; // JSON serialized
+    private String payload;
 
     private Integer progress;
 
@@ -46,13 +48,19 @@ public class Job {
     @Column(columnDefinition = "TEXT")
     private String error;
 
+    @Column(name = "retry_count")
     private Integer retryCount;
 
+    @Column(name = "submitted_at")
     private LocalDateTime submittedAt;
+
+    @Column(name = "started_at")
     private LocalDateTime startedAt;
+
+    @Column(name = "completed_at")
     private LocalDateTime completedAt;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
-    @Convert(converter = JsonbConverter.class)
     private Map<String, Object> metadata;
 }

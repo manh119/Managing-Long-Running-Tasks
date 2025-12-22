@@ -62,51 +62,10 @@ public class JobService {
         return job;
     }
 
-    public Job submitImageProcess(ImageProcessRequest request, String idempotencyKey) {
-        if (idempotencyKey == null) {
-            idempotencyKey = generateIdempotencyKey(request);
-        }
-
-        Job job = Job.builder()
-                .id(UUID.randomUUID().toString())
-                .type(JobType.IMAGE_PROCESS)
-                .status(JobStatus.PENDING)
-                .idempotencyKey(idempotencyKey)
-                .payload(serializePayload(request))
-                .progress(0)
-                .retryCount(0)
-                .submittedAt(LocalDateTime.now())
-                .metadata(new HashMap<>())
-                .build();
-
-        job = jobRepository.save(job);
-
-        // Gửi vào FAST queue cho image processing
-        JobMessage message = JobMessage.builder()
-                .jobId(job.getId())
-                .type(job.getType())
-                .payload(job.getPayload())
-                .attemptCount(0)
-                .build();
-
-        jobProducer.sendToFastQueue(message);
-
-        log.info("Submitted image process job: {}", job.getId());
-        return job;
-    }
-
     public Optional<Job> findById(String jobId) {
         return jobRepository.findById(jobId);
     }
 
-    public Job saveJob(Job job) {
-        return jobRepository.save(job);
-    }
-
-    public Optional<Job> findByWorkflowAndParent(String workflowId, String parentJobId) {
-        // This is a placeholder implementation. Implement repository query as needed.
-        return Optional.empty();
-    }
 
     public Optional<Job> findByIdempotencyKey(String key) {
         return jobRepository.findByIdempotencyKey(key);

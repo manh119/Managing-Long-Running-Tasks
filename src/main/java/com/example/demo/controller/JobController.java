@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.ImageProcessRequest;
 import com.example.demo.dto.JobResponse;
 import com.example.demo.dto.VideoTranscodeRequest;
 import com.example.demo.entity.Job;
@@ -18,7 +17,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class JobController {
     private final JobService jobService;
-    
+
+    /**
+     * @param request
+     * @param idempotencyKey
+     * @return gửi video cần xử lý vào job queue
+     */
     @PostMapping("/video-transcode")
     public ResponseEntity<JobResponse> submitVideoTranscode(
             @RequestBody VideoTranscodeRequest request,
@@ -55,27 +59,6 @@ public class JobController {
     @GetMapping("/{jobId}/stream")
     public SseEmitter streamJobStatus(@PathVariable String jobId) {
         return jobService.streamJobStatus(jobId);
-    }
-
-    /**
-     * @param request
-     * @param idempotencyKey
-     * @return gửi ảnh cần xử lý vào background job
-     */
-    @PostMapping("/image-process")
-    public ResponseEntity<JobResponse> submitImageProcess(
-            @RequestBody ImageProcessRequest request,
-            @RequestHeader("X-Idempotency-Key") String idempotencyKey) {
-        
-        Optional<Job> existing = jobService.findByIdempotencyKey(idempotencyKey);
-        if (existing.isPresent()) {
-            return ResponseEntity.ok(JobResponse.from(existing.get()));
-        }
-        
-        Job job = jobService.submitImageProcess(request, idempotencyKey);
-        return ResponseEntity.accepted()
-                .header("Location", "/api/v1/jobs/" + job.getId())
-                .body(JobResponse.from(job));
     }
 }
 

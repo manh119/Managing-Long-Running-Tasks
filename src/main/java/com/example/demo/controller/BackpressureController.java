@@ -1,4 +1,4 @@
-package com.example.demo.kafka;
+package com.example.demo.controller;
 
 import com.example.demo.dto.JobRequest;
 import com.example.demo.dto.JobStatus;
@@ -39,7 +39,7 @@ public class BackpressureController {
                 // Kiểm tra rate limit per user
                 String userId = getCurrentUserId();
                 long userPendingJobs = jobRepository.countByUserAndStatus(
-                                userId, JobStatus.PENDING);
+                                userId, JobStatus.PENDING.name());
 
                 if (userPendingJobs > 50) {
                         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
