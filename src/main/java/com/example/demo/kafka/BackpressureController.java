@@ -3,10 +3,9 @@ package com.example.demo.kafka;
 import com.example.demo.dto.JobRequest;
 import com.example.demo.dto.JobStatus;
 import com.example.demo.repository.JobRepository;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,9 +16,8 @@ import java.util.Map;
 // BackpressureController.java
 @RestController
 @RequestMapping("/api/v1/jobs")
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class BackpressureController {
-        private final QueueMonitoringService monitoringService;
         private final JobRepository jobRepository;
 
         @PostMapping("/submit")
@@ -62,7 +60,6 @@ public class BackpressureController {
         }
 
         private String getCurrentUserId() {
-                return SecurityContextHolder.getContext()
-                                .getAuthentication().getName();
+                return "current user id 1";
         }
 }

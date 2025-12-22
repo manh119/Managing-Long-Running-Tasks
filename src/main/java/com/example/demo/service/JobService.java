@@ -1,21 +1,21 @@
 package com.example.demo.service;
 
-import org.springframework.stereotype.Service;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.apache.commons.codec.digest.DigestUtils;
-import java.util.UUID;
-import java.util.HashMap;
-import java.util.Optional;
-import java.time.LocalDateTime;
 import com.example.demo.dto.*;
 import com.example.demo.entity.Job;
 import com.example.demo.kafka.JobProducer;
 import com.example.demo.repository.JobRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Optional;
+import java.util.UUID;
 
 // JobService.java
 @Service
@@ -119,7 +119,7 @@ public class JobService {
     private String generateIdempotencyKey(Object request) {
         try {
             // Tạo key từ user context + request + time window (5 phút)
-            String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+            String userId = "user id 1";
             long timeWindow = System.currentTimeMillis() / (5 * 60 * 1000); // 5 min window
             String content = userId + ":" + objectMapper.writeValueAsString(request) + ":" + timeWindow;
             return DigestUtils.sha256Hex(content);

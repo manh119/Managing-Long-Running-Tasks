@@ -1,6 +1,5 @@
 
 
-  /*
 spring:
   kafka:
     bootstrap-servers: localhost:9092
@@ -23,6 +22,10 @@ kafka:
       fast: jobs.fast           # Image, PDF, quick tasks
       long: jobs.long           # Video, ML, long tasks
       dlq: jobs.dlq            # Dead letter queue
+
+# Server port
+server:
+  port: 8088
 
 # Monitoring
 management:
