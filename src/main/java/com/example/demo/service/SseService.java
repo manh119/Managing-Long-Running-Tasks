@@ -18,7 +18,7 @@ public class SseService {
     private final Map<String, List<SseEmitter>> emitters = new ConcurrentHashMap<>();
 
     public SseEmitter createEmitter(String jobId) {
-        SseEmitter emitter = new SseEmitter(30 * 60 * 1000L); // 30 min timeout
+        SseEmitter emitter = new SseEmitter(5 * 60 * 1000L); // 30 min timeout
 
         emitter.onCompletion(() -> removeEmitter(jobId, emitter));
         emitter.onTimeout(() -> removeEmitter(jobId, emitter));
