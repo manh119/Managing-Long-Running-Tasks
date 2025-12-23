@@ -16,7 +16,8 @@ public class JobProducer {
 
     @Value("${kafka.topics.jobs.long}")
     private String longQueueTopic;
-    private ObjectMapper objectMapper;
+
+    private final ObjectMapper objectMapper;
 
     public void sendToLongQueue(JobMessage message) {
         send(longQueueTopic, message);

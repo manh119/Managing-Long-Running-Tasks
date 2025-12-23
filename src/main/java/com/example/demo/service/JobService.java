@@ -33,7 +33,29 @@ public class JobService {
             idempotencyKey = generateIdempotencyKey(request);
         }
 
-        Job job = Job.builder()
+        // Lưu vào DB trước khi gửi Kafka (đảm bảo tracking)
+        Job job = getJob(request, idempotencyKey);
+        job = jobRepository.save(job);
+
+        // Gửi vào Kafka queue - LONG queue cho video transcoding
+        JobMessage message = getJobMessage(job);
+        jobProducer.sendToLongQueue(message);
+        log.info("Submitted video transcode job: {}", job.getId());
+
+        return job;
+    }
+
+    private static JobMessage getJobMessage(Job job) {
+        return JobMessage.builder()
+                .jobId(job.getId())
+                .type(job.getType())
+                .payload(job.getPayload())
+                .attemptCount(0)
+                .build();
+    }
+
+    private Job getJob(VideoTranscodeRequest request, String idempotencyKey) {
+        return Job.builder()
                 .id(UUID.randomUUID().toString())
                 .type(JobType.VIDEO_TRANSCODE)
                 .status(JobStatus.PENDING)
@@ -44,22 +66,6 @@ public class JobService {
                 .submittedAt(LocalDateTime.now())
                 .metadata(new HashMap<>())
                 .build();
-
-        // Lưu vào DB trước khi gửi Kafka (đảm bảo tracking)
-        job = jobRepository.save(job);
-
-        // Gửi vào Kafka queue - LONG queue cho video transcoding
-        JobMessage message = JobMessage.builder()
-                .jobId(job.getId())
-                .type(job.getType())
-                .payload(job.getPayload())
-                .attemptCount(0)
-                .build();
-
-        jobProducer.sendToLongQueue(message);
-
-        log.info("Submitted video transcode job: {}", job.getId());
-        return job;
     }
 
     public Optional<Job> findById(String jobId) {
