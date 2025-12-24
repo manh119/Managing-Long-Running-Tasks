@@ -24,7 +24,7 @@ public class DeviceScoreScheduler {
     private static final Logger LOGGER = LoggerFactory.getLogger(DeviceScoreScheduler.class);
     private final DeviceScoreRepository deviceScoreRepository;
     //private final OpenApiProxy openApiProxy;
-    private final DeviceScoreProperties properties;
+    private DeviceScoreProperties properties;
 
     // Use a managed ThreadPool
     private final ExecutorService taskExecutor = Executors.newFixedThreadPool(20);
@@ -32,6 +32,7 @@ public class DeviceScoreScheduler {
     @Scheduled(cron = "${custom.properties.device-score.scheduler-cron}")
     @PreventDuplicateMethod(key = "SEND_EMAIL_JOB", leaseTime = 300)
     public void runDeviceScoreJob() {
+        this.properties = new DeviceScoreProperties();
         Timestamp lastCreatedAt = null;
         String lastId = null; 
 
@@ -90,5 +91,26 @@ public class DeviceScoreScheduler {
             DeviceScore lastRecord = batch.get(batch.size() - 1);
             lastCreatedAt = new Timestamp(lastRecord.getCreatedAt().getTime());
         }
+    }
+
+    // demo sleep 2 seconds between each retry
+    private void executeUpload(DeviceScore deviceScore) {
+        int currentRetry = deviceScore.getRetryCount();
+        boolean success = false;
+
+        while (currentRetry < properties.getMaxRetry() && !success) {
+            currentRetry++;
+            //success = tryUpload(deviceScore, currentRetry);
+            try {
+                Thread.sleep(2000); // 1 second
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            if (!success && currentRetry < properties.getMaxRetry()) {
+                //sleepInterval();
+            }
+        }
+        deviceScore.setStatus("SUCCESS");
+        deviceScore.setRetryCount(currentRetry);
     }
 }

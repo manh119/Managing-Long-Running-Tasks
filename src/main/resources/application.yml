@@ -95,5 +95,9 @@ logging:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
   file:
     name: logs/storage-service.log
+custom:
+  properties:
+    device-score:
+      scheduler-cron: "0 */1 * * * ?"
 
 
