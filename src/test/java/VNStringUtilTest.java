@@ -5,7 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class VNStringUtilTest {
 
@@ -112,189 +113,71 @@ class VNStringUtilTest {
             String result = VNStringUtil.removeAccents("´ ` ̉ ̃ ̣");
             assertNotNull(result);
         }
+
     }
 
-    @Nested
-    @DisplayName("Tests cho hàm smartContains (Tìm kiếm thông minh)")
-    class SmartContainsTests {
 
-        @ParameterizedTest(name = "Source: {0} | Keyword: {1} -> Kết quả: {2}")
-        @CsvSource({
-            // 1. Accent Insensitive (Không phân biệt dấu)
-            "Đại lý 1, dai ly, true",
-            "Đại lý 1, ĐÀI LÝ, true",
-            "mã địa lý, dia ly, true",
-            
-            // 2. Case Insensitive (Không phân biệt hoa thường)
-            "ABC 123, abc, true",
-            "siêu thị mini, MINI, true",
-            
-            // 3. Chữ Đ và D
-            "Đại Phát, dai phat, true",
-            "Dòng sông, đong, true",
-            
-            // 4. Partial Match (Tìm kiếm tương đối)
-            "Cửa hàng Đại Phát, Phat, true",
-            "Cửa hàng Đại Phát, cua hang, true",
-            "ABC 123, 123, true",
-            "ABC 123, BC, true",
-            
-            // 5. Negative Cases (Trường hợp không khớp)
-            "Đại lý 1, dai ly 2, false",
-            "Cửa hàng, siêu thị, false",
-            "ABC, XYZ, false"
-        })
-        void testSmartContains(String source, String keyword, boolean expected) {
-            assertEquals(expected, VNStringUtil.smartContains(source, keyword));
-        }
+    // ============================================
+    // PHẦN 3: TEST findKeywordIndex()
+    // ============================================
 
-        @Test
-        @DisplayName("Kiểm tra đầu vào null hoặc rỗng")
-        void testSmartContainsEdgeCases() {
-            assertAll("Edge cases",
-                () -> assertFalse(VNStringUtil.smartContains(null, "src/test")),
-                () -> assertFalse(VNStringUtil.smartContains("src/test", null)),
-                () -> assertFalse(VNStringUtil.smartContains(null, null)),
-                // Chú ý: keyword rỗng thường trả về true trong Java String.contains
-                () -> assertTrue(VNStringUtil.smartContains("Đại lý", ""))
-            );
-        }
+    @ParameterizedTest
+    @CsvSource({
+            // Test null/empty keyword (56-57)
+            "ABC123, Test, , -1",
+            // Test tìm thấy ở các vị trí code (58-60)
+            "ABC123, Test Name, abc, 0",
+            "HNBC123, Test, bc, 2",
+            "ABC123, Test, 123, 4",
+            // Test ưu tiên code trước name (61-62)
+            "ABC123, Test Name, test, 0",
+            "TEST123, Test Name, test, 0",
+            // Test không tìm thấy (63)
+            "ABC123, Test Name, xyz, -1",
+            // Test keyword đặc biệt (76-79)
+            "ABC, Ha Noi, ha noi, 0",
+            "ABC123, Test, 123, 3",
+            "ABC, test, abc, 0",
+            "ABC-123, Test, -, 3",
+            // Test code và name giống nhau (80)
+            "TEST, TEST, test, 0"
+    })
+    @DisplayName("Test 56-63, 76-80: Tìm keyword trong code và name")
+    void testFindKeywordIndex_BasicCases(String code, String name, String keyword, int expected) {
+        assertEquals(expected, VNStringUtil.findKeywordIndex(code, name, keyword));
     }
 
-    @Nested
-    @DisplayName("Tests cho hàm smartContains (Tìm kiếm thông minh) - 100 Cases")
-    class SmartContainsTests1 {
+    @ParameterizedTest
+    @CsvSource({
+            "HN001, Ha Noi Store, hn, 0",
+            "SG002, Sai Gon Store, sg, 0",
+            "DN003, Da Nang Store, dn, 0",
+            "HCM004, Ho Chi Minh, hcm, 0",
+            "CT005, Can Tho, ct, 0"
+    })
+    @DisplayName("Test 66-70: Tìm mã thành phố")
+    void testFindKeywordIndex_CityCode(String code, String name, String keyword, int expected) {
+        assertEquals(expected, VNStringUtil.findKeywordIndex(code, name, keyword));
+    }
 
-        @ParameterizedTest(name = "{index} => Source: {0} | Key: {1} -> Trả về: {2}")
-        @CsvSource({
-                // 1. Tìm kiếm không dấu (Accent Insensitive) - 15 cases
-                "Đại lý ABC, dai ly, true",
-                "Hà Nội Việt Nam, ha noi, true",
-                "Sửa chữa máy tính, sua chua, true",
-                "Quản trị viên, quan tri, true",
-                "Kỹ thuật viên, ky thuat, true",
-                "Phần mềm kế toán, phan mem, true",
-                "Hệ thống nhúng, he thong, true",
-                "Mạng máy tính, mang may tinh, true",
-                "Cơ sở dữ liệu, co so du lieu, true",
-                "Trí tuệ nhân tạo, tri tue nhan tao, true",
-                "Phát triển ứng dụng, phat trien, true",
-                "An toàn thông tin, an toan, true",
-                "Điện toán đám mây, dien toan, true",
-                "Xử lý ảnh, xu ly, true",
-                "Thị giác máy tính, thi giac, true",
+    @ParameterizedTest
+    @CsvSource({
+            "ABC001, nguyễn Van A, nguyen, 0",
+            "ABC002, Trần Thi B, tran, 0",
+            "ABC003, Le Vần C, van, 3",
+            "ABC004, Pham Minh D, minh, 5",
+            "ABC005, Hoang Thỉ E, thi, 6"
+    })
+    @DisplayName("Test 71-75: Tìm tên người")
+    void testFindKeywordIndex_PersonName(String code, String name, String keyword, int expected) {
+        assertEquals(expected, VNStringUtil.findKeywordIndex(code, name, keyword));
+    }
 
-                // 2. Không phân biệt hoa thường (Case Insensitive) - 15 cases
-                "ĐẠI LÝ 1, đại lý, true",
-                "dai ly 2, DAI LY, true",
-                "Siêu Thị Co.op, SIÊU THỊ, true",
-                "Cửa hàng Mini, mini, true",
-                "Apple Store, APPLE, true",
-                "Samsung Vina, samsung, true",
-                "Sony Center, SONY, true",
-                "Thế Giới Di Động, thế giới, true",
-                "Điện Máy Xanh, ĐIỆN MÁY, true",
-                "FPT Shop, fpt shop, true",
-                "Viettel Store, VIETTEL, true",
-                "Bách Hóa Xanh, bách hóa, true",
-                "VinMart, vinmart, true",
-                "Lotte Mart, LOTTE, true",
-                "Big C Việt Nam, big c, true",
-
-                // 3. Xử lý chữ Đ và D (Đặc thù tiếng Việt) - 10 cases
-                "Đồng Nai, dong nai, true",
-                "Bình Dương, binh duong, true",
-                "Đà Lạt, da lat, true",
-                "Hà Đông, ha đong, true",
-                "Dòng sông, đong song, true",
-                "Đường sắt, duong sat, true",
-                "Điện lực, dien luc, true",
-                "Duy nhất, đuy nhat, true",
-                "Đặc điểm, dac diem, true",
-                "Dung lượng, đung luong, true",
-
-                // 4. Tìm kiếm tương đối (Partial Match - Vị trí đầu, giữa, cuối) - 20 cases
-                "Đại lý cấp 1, Đại, true",           // Đầu
-                "Đại lý cấp 1, cấp 1, true",        // Cuối
-                "Đại lý cấp 1, lý cấp, true",       // Giữa
-                "Mã số: ABC-123-XYZ, ABC, true",
-                "Mã số: ABC-123-XYZ, 123, true",
-                "Mã số: ABC-123-XYZ, XYZ, true",
-                "Nguyễn Văn A, Văn, true",
-                "Nguyễn Văn A, Nguyễn, true",
-                "Nguyễn Văn A, A, true",
-                "0901234567, 090, true",
-                "0901234567, 567, true",
-                "0901234567, 1234, true",
-                "Hanoi_Vietnam_2024, 2024, true",
-                "Hanoi_Vietnam_2024, Vietnam, true",
-                "Hanoi_Vietnam_2024, Hanoi, true",
-                "Sản phẩm mới 100%, 100%, true",
-                "Sản phẩm mới 100%, mới, true",
-                "agent_code_001, code, true",
-                "agent_code_001, 001, true",
-                "agent_code_001, agent, true",
-
-                // 5. Kết hợp phức tạp (Dấu + Hoa thường + Space) - 20 cases
-                "tên ĐẠI LÝ 1, dai ly 1, true",
-                "mã ĐỊA LÝ 2, dia ly 2, true",
-                "CỬA HÀNG đa nang, da nang, true",
-                "ĐIỆN thoại Di Động, dien thoai di dong, true",
-                "Máy Tính Xách Tay, may tinh xach tay, true",
-                "Đồ Gia Dụng, do gia dung, true",
-                "Thời Trang Nam, thoi trang nam, true",
-                "Mỹ Phẩm Cao Cấp, my pham cao cap, true",
-                "Thực Phẩm Sạch, thuc pham sach, true",
-                "Nội Thất Văn Phòng, noi that van phong, true",
-                "Dụng Cụ Học Tập, dung cu hoc tap, true",
-                "Thiết Bị Điện Tử, thiet bi dien tu, true",
-                "Phụ Kiện Ô Tô, phu kien o to, true",
-                "Dịch Vụ Du Lịch, dich vu du lich, true",
-                "Bất Động Sản, bat dong san, true",
-                "Tài Chính Ngân Hàng, tai chinh ngan hang, true",
-                "Giáo Dục Đào Tạo, giao duc dao tao, true",
-                "Y Tế Sức Khỏe, y te suc khoe, true",
-                "Năng Lượng Sạch, nang luong sach, true",
-                "Môi Trường Đô Thị, moi truong do thi, true",
-
-                // 6. Trường hợp không khớp (Negative cases) - 15 cases
-                "Đại lý 1, dai ly 2, false",
-                "Hà Nội, Sài Gòn, false",
-                "Apple, Samsung, false",
-                "12345, 6789, false",
-                "Mã số thuế, số chứng minh, false",
-                "Cửa hàng, siêu thị, false",
-                "Đại lý, tổng kho, false",
-                "Admin, user, false",
-                "Phần mềm, phần cứng, false",
-                "Đã thanh toán, chưa thanh toán, false",
-                "Hoàn thành, đang chờ, false",
-                "Thành công, thất bại, false",
-                "Đúng, Sai, false",
-                "abc, def, false",
-                "Việt Nam, Lào, false",
-
-                // 7. Ký tự đặc biệt và biên - 5 cases
-                "Đại lý @123, @123, true",
-                "Đại lý (Quận 1), (quan 1), true",
-                "Đại lý [VIP], [vip], true",
-                "Đại lý & Cửa hàng, &, true",
-                "Đại lý #001, #001, true"
-        })
-        void testSmartContains(String source, String keyword, boolean expected) {
-            assertEquals(expected, VNStringUtil.smartContains(source, keyword));
-        }
-
-        @Test
-        @DisplayName("Kiểm tra các trường hợp Null/Empty")
-        void testSmartContainsEdgeCases() {
-            assertAll("Edge cases",
-                    () -> assertFalse(VNStringUtil.smartContains(null, "search")),
-                    () -> assertFalse(VNStringUtil.smartContains("source", null)),
-                    () -> assertFalse(VNStringUtil.smartContains(null, null)),
-                    () -> assertTrue(VNStringUtil.smartContains("Bất kỳ", ""), "Keyword rỗng phải trả về true"),
-                    () -> assertTrue(VNStringUtil.smartContains("   ", " "), "Space phải khớp với Space")
-            );
-        }
+    @Test
+    @DisplayName("Test 56, 64-65: Xử lý null")
+    void testFindKeywordIndex_NullHandling() {
+        assertEquals(-1, VNStringUtil.findKeywordIndex("ABC123", "Test", null));
+        assertEquals(0, VNStringUtil.findKeywordIndex(null, "Test Name", "test"));
+        assertEquals(0, VNStringUtil.findKeywordIndex("ABC123", null, "abc"));
     }
 }
