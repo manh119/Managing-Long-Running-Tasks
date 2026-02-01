@@ -32,3 +32,4 @@ build/
 ### VS Code ###
 .vscode/
 /src/test/java/com/example/demo/JobProcessingIntegrationTest.java
+/logs/storage-service.log

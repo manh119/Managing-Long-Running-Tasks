@@ -14,11 +14,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 @Entity
-@Table(name = "jobs", indexes = {
-        @Index(name = "idx_idempotency", columnList = "idempotencyKey", unique = true),
-        @Index(name = "idx_status", columnList = "status"),
-        @Index(name = "idx_submitted", columnList = "submittedAt")
-})
+@Table(name = "jobs")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -63,4 +59,7 @@ public class Job {
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     private Map<String, Object> metadata;
+
+    //@Version
+    //private Long version; // For Optimistic Locking
 }

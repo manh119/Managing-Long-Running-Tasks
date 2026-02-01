@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Repository
+@Repository("jobRepositoryVersioned")
 public interface JobRepository extends JpaRepository<Job, String> {
     
     Optional<Job> findByIdempotencyKey(String idempotencyKey);

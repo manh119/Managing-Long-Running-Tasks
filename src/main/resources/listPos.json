@@ -1,0 +1,128 @@
+[
+  {
+    "code": "TRONGTH111",
+    "name": "TRONGTH111",
+    "location": {
+      "name": "Phường 5, Thành phố Tân An, Tỉnh Long An"
+    }
+  },
+  {
+    "code": "TRONGTH122134",
+    "name": "TRONGTH122134",
+    "location": {
+      "name": "Phường Phúc Xá, Quận Ba Đình, Thành phố Hà Nội"
+    }
+  },
+  {
+    "code": "POS010121",
+    "name": "834",
+    "location": {
+      "name": "Phường Phúc Xá, Quận Ba Đình, Thành phố Hà Nội"
+    }
+  },
+  {
+    "code": "POS010122",
+    "name": "79932323",
+    "location": {
+      "name": "Phường Trúc Bạch, Quận Ba Đình, Thành phố Hà Nội"
+    }
+  },
+  {
+    "code": "POS010123",
+    "name": "qqqqq",
+    "location": {
+      "name": "Phường Phúc Xá, Quận Ba Đình, Thành phố Hà Nội"
+    }
+  },
+  {
+    "code": "POS010124",
+    "name": "aaaaa",
+    "location": {
+      "name": "Phường Phúc Xá, Quận Ba Đình, Thành phố Hà Nội"
+    }
+  },
+  {
+    "code": "POS010125",
+    "name": "erttrte",
+    "location": {
+      "name": "Phường Phúc Xá, Quận Ba Đình, Thành phố Hà Nội"
+    }
+  },
+  {
+    "code": "POS800027",
+    "name": "0369985319",
+    "location": {
+      "name": "Phường 5, Thành phố Tân An, Tỉnh Long An"
+    }
+  },
+  {
+    "code": "test02",
+    "name": "test02",
+    "location": {
+      "name": "Phường 5, Thành phố Tân An, Tỉnh Long An"
+    }
+  },
+  {
+    "code": "POS800028",
+    "name": "SIPTEST27",
+    "location": {
+      "name": "Phường 5, Thành phố Tân An, Tỉnh Long An"
+    }
+  },
+  {
+    "code": "POS800029",
+    "name": "siploi",
+    "location": {
+      "name": "Phường 5, Thành phố Tân An, Tỉnh Long An"
+    }
+  },
+  {
+    "code": "POS800030",
+    "name": "testsipcantru",
+    "location": {
+      "name": "Phường 5, Thành phố Tân An, Tỉnh Long An"
+    }
+  },
+  {
+    "code": "POS800031",
+    "name": "testsipkcantru",
+    "location": {
+      "name": "Phường 2, Thành phố Tân An, Tỉnh Long An"
+    }
+  },
+  {
+    "code": "POS800032",
+    "name": "testsip03",
+    "location": {
+      "name": "Phường 5, Thành phố Tân An, Tỉnh Long An"
+    }
+  },
+  {
+    "code": "POS800033",
+    "name": "testsip04",
+    "location": {
+      "name": "Phường 5, Thành phố Tân An, Tỉnh Long An"
+    }
+  },
+  {
+    "code": "POS010126",
+    "name": "testabc",
+    "location": {
+      "name": "Phường Phúc Xá, Quận Ba Đình, Thành phố Hà Nội"
+    }
+  },
+  {
+    "code": "TESTT24",
+    "name": "TESTT24",
+    "location": {
+      "name": "Phường Phúc Xá, Quận Ba Đình, Thành phố Hà Nội"
+    }
+  },
+  {
+    "code": "POS010127",
+    "name": "QTEST_T24",
+    "location": {
+      "name": "Phường Phúc Xá, Quận Ba Đình, Thành phố Hà Nội"
+    }
+  }
+]

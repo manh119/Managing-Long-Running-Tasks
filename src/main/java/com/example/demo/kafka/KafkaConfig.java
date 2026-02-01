@@ -90,5 +90,13 @@ public class KafkaConfig {
     public ObjectMapper objectMapper() {
         return new ObjectMapper();
     }
-
+//
+//
+//
+//    @Bean
+//    public AdminClient adminClient() {
+//        return AdminClient.create(
+//                kafkaProperties.buildAdminProperties()
+//        );
+//    }
 }

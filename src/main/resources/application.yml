@@ -19,6 +19,9 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  batch:
+    jdbc:
+          initialize-schema: always
 
 kafka:
   topics:
@@ -87,14 +90,14 @@ bucket4j:
               unit: hours
 
 # Logging
-logging:
-  level:
-    com.example.storage: INFO
-    software.amazon.awssdk: WARN
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
-  file:
-    name: logs/storage-service.log
+#logging:
+#  level:
+#    com.example.storage: INFO
+#    software.amazon.awssdk: WARN
+#  pattern:
+#    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+#  file:
+#    name: logs/storage-service.log
 custom:
   properties:
     device-score:
