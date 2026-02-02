@@ -27,7 +27,7 @@ public class DeviceScoreScheduler {
     private final int BATCH_SIZE = 1000;
     private final int MAX_RETRY = 3;
 
-    @Scheduled(cron = "${custom.properties.device-score.scheduler-cron}")
+    //@Scheduled(cron = "${custom.properties.device-score.scheduler-cron}")
     @PreventDuplicateMethod(key = "SEND_EMAIL_JOB", leaseTime = 300)
     public void runDeviceScoreJob() {
         Timestamp lastCreatedAt = null;

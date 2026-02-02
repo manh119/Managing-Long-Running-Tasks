@@ -14,6 +14,8 @@ public class ProcessController {
 
     @GetMapping("/run-parallel")
     public String run() throws Exception {
+        System.out.println("Main thread " + Thread.currentThread().getName());
+
         long start = System.currentTimeMillis();
 
         // Kích hoạt 3 task chạy cùng lúc
@@ -22,10 +24,13 @@ public class ProcessController {
         CompletableFuture<String> t3 = service.processData("Task 3");
 
         // Chờ tất cả hoàn thành
-        CompletableFuture.allOf(t1, t2, t3).join();
+        //CompletableFuture.allOf(t1, t2, t3).join();
+        System.out.println(t1.get());
+        System.out.println(t2.get());
+        System.out.println(t3.get());
 
         long end = System.currentTimeMillis();
-        return "Hoàn thành trong: " + (end - start) + "ms"; 
+        return "Hoàn thành trong: " + (end - start) + "ms";
         // Thay vì mất 6s (tuần tự), nó chỉ mất ~2s (song song)
     }
 

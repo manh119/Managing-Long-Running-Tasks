@@ -14,8 +14,8 @@ public class AsyncConfig {
     @Bean(name = "taskExecutor")
     public Executor taskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(5);      // Số thread luôn duy trì
-        executor.setMaxPoolSize(10);     // Số thread tối đa khi hàng đợi đầy
+        executor.setCorePoolSize(100);      // Số thread luôn duy trì
+        executor.setMaxPoolSize(100);     // Số thread tối đa khi hàng đợi đầy
         executor.setQueueCapacity(100);  // Số lượng task đợi trong hàng hàng đợi
         executor.setThreadNamePrefix("SpringAsync-");
         executor.initialize();

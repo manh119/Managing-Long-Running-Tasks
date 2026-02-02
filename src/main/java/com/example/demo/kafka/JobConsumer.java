@@ -1,16 +1,18 @@
 package com.example.demo.kafka;
 
-import com.example.demo.dto.*;
+import com.example.demo.dto.JobMessage;
+import com.example.demo.dto.JobResponse;
+import com.example.demo.dto.JobStatus;
+import com.example.demo.dto.VideoTranscodeRequest;
 import com.example.demo.entity.Job;
 import com.example.demo.repository.JobRepository;
 import com.example.demo.service.SseService;
 import com.example.demo.service.VideoTranscoder;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import jakarta.persistence.OptimisticLockException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 
@@ -34,14 +36,14 @@ public class JobConsumer {
 
 
     // Worker cho LONG queue (video transcoding, ML inference)
-    @KafkaListener(topics = "${kafka.topics.jobs.long}", groupId = "job-worker-long", concurrency = "3", // Ít worker
-                                                                                                         // hơn vì job
-                                                                                                         // lâu
-            properties = {
-                    "session.timeout.ms=60000", // 60s session timeout
-                    "heartbeat.interval.ms=20000", // 20s heartbeat
-                    "max.poll.interval.ms=1800000" // 30 min max processing
-            })
+//    @KafkaListener(topics = "${kafka.topics.jobs.long}", groupId = "job-worker-long", concurrency = "3", // Ít worker
+//                                                                                                         // hơn vì job
+//                                                                                                         // lâu
+//            properties = {
+//                    "session.timeout.ms=60000", // 60s session timeout
+//                    "heartbeat.interval.ms=20000", // 20s heartbeat
+//                    "max.poll.interval.ms=1800000" // 30 min max processing
+//            })
     public void processLongJob(String message, Acknowledgment ack) {
         JobMessage jobMessage = null;
         try {
