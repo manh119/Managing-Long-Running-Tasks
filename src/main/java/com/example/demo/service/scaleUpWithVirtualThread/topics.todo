@@ -1,0 +1,30 @@
+Scaling Up with Virtual Threads
+Venkat Subramaniam
+Email: venkats@agiledeveloper.com
+Twitter: @venkat_s
+http://www.agiledeveloper.com download link
+  
+Topics:
+-Parallel, Concurrent, Asynchronous programming
+
+-What is asynchronous programming?
+
+-The behavior of threads
+-observing threads
+
+We can run jps to get the process id
+Then run jconsole processid, click on the Threads tab and observe the thread as the program executes.
+
+-impact on scalability
+-consequences
+
+-Non blocking execution - example in Kotlin
+
+- What are virtual threads
+- using virtual threads
+
+- performing multiple IO operations -> tested with 1M request, chỉ cần 25 thread chính, trong khi nếu thread bình thường sẽ bị timeout memory
+- thread usage
+- thread usage with virtual threads
+
+- discussions

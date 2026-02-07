@@ -1,0 +1,30 @@
+Multithreading vs. Asynchronous Programming: The Architectural Shift
+Venkat Subramaniam
+Email: venkats@agiledeveloper.com
+Twitter: @venkat_s
+http://www.agiledeveloper.com download link
+  
+Topics:
+-seqential processing
+-reasons to go beyond
+
+-multithreading
+-Threads
+-Thread pools
+-Executor Services
+-ForkJoinPool
+
+-parallel vs. concurrent
+-asynchronous programming
+
+-business and architectural needs
+
+-ways to program asynchronous applications?
+
+-Completable Future
+-Virtual Threads
+
+-Which one to choose and why?
+
+-Discussions
+
