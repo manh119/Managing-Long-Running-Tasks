@@ -131,24 +131,35 @@ created_at
 
 select count (*) from user_register_signature_viettel_test -- 70M record
 
-![img_2.png](img_2.png)
+![img_2.png](docs/img_2.png)
 
 
 create index phoneNu_number_index on user_register_signature_viettel_test(phone_number)  - just 3 minutes to index 70M records
-![img_3.png](img_3.png)
+![img_3.png](docs/img_3.png)
 
 select a phone number in 70M records just 411ms
-![img_4.png](img_4.png)
+![img_4.png](docs/img_4.png)
 
 select with partition key and phone number ~ 400ms
-![img_8.png](img_8.png)
+![img_8.png](docs/img_8.png)
 
 select with phone number and partiton key ~ 400ms
-![img_9.png](img_9.png)
+![img_9.png](docs/img_9.png)
 
 
 example data 
-![img_10.png](img_10.png)
+![img_10.png](docs/img_10.png)
 
 total disk size = 23GB
-![img_11.png](img_11.png)
+![img_11.png](docs/img_11.png)
+
+todo - what if index in each partiton, how much it efficient is ?
+- now - we just have global index (I know because 
+- we have find by index and find by partition key and the index about 400 ms)
+
+## Challenges
+100 days = 100M record
+todo : batch processing to push 1tr message notification to user a days ???
+problem : data ware house need insert to my database 1M notification in a scheduler time for customer.
+problem : batch insert, problem insert, mark success, processing -> select for update (pess lock)
+problem : deadlock -> update batch not in order
